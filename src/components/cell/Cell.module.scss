@@ -1,0 +1,7 @@
+.cell {
+  @apply h-5 w-5 border border-black border-solid;
+
+  &--alive {
+    @apply bg-green-600;
+  }
+}
