@@ -4,38 +4,18 @@ import Cell, { CellProps } from '../cell/Cell';
 import styles from './Board.module.scss';
 
 interface BoardProps {
-  width: number;
-  height: number;
+  cells: CellProps[][];
 }
 
-const generateIsAlive = () => Math.random() > 0.8;
-
-const Board = ({ width, height }: BoardProps) => {
-  const [cells, setCells] = useState<CellProps[][]>([]);
-
-  useEffect(() => {
-    const cellsCopy: CellProps[][] = [];
-    for (let i = 0; i < height; i++) {
-      cellsCopy[i] = [];
-
-      for (let j = 0; j < width; j++) {
-        cellsCopy[i][j] = {
-          isAlive: generateIsAlive(),
-        };
-      }
-    }
-
-    setCells(cellsCopy);
-  }, []);
-
+const Board = ({ cells }: BoardProps) => {
   return (
     <div className={styles.board}>
-      {cells.map((cellRow, x) => {
+      {cells.map((row, x) => {
         return (
           <div className={styles.row} key={'row-' + x}>
-            {cellRow.map((cellCol, y) => {
+            {row.map((cell, y) => {
               return (
-                <Cell isAlive={cellCol.isAlive} key={'row-' + x + 'col-' + y} />
+                <Cell isAlive={cell.isAlive} key={'row-' + x + 'col-' + y} />
               );
             })}
           </div>
