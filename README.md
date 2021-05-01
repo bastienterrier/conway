@@ -16,7 +16,9 @@ This app aims to allow user to customize cell's survival rules and enjoy the evo
 ## Stack
 
 - React
-- Vitejs
+- TypeScript
+- Vite
+- TailwindCSS
 
 ## Development
 
