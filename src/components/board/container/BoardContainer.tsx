@@ -7,16 +7,88 @@ const generateIsAlive = () => Math.random() > 0.8;
 interface BoardContainerProps {
   width: number;
   height: number;
+  initialState?: CellProps[][];
 }
 
-const computeState = (
+const getAliveNeighbours = (
+  cells: CellProps[][],
   x: number,
   y: number,
   width: number,
   height: number
-) => {};
+): number => {
+  let aliveCells = 0;
 
-const updateCells = (cells: CellProps[][], setCells: any) => {
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      if (i === 0 && j === 0) {
+        continue;
+      }
+
+      let targetX = x + i;
+      let targetY = y + j;
+
+      if (targetX < 0) {
+        targetX = height - 1;
+      }
+      if (targetX >= height) {
+        targetX = 0;
+      }
+      if (targetY < 0) {
+        targetY = width - 1;
+      }
+      if (targetY >= width) {
+        targetY = 0;
+      }
+
+      if (cells[targetX][targetY].isAlive) {
+        aliveCells++;
+      }
+    }
+  }
+
+  return aliveCells;
+};
+
+const computeNextState = (
+  cells: CellProps[][],
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): CellProps => {
+  const aliveNeighbours = getAliveNeighbours(cells, x, y, width, height);
+  const currentState = cells[x][y];
+
+  // survives
+  if (
+    currentState.isAlive &&
+    (aliveNeighbours === 2 || aliveNeighbours === 3)
+  ) {
+    return {
+      isAlive: true,
+    };
+  }
+
+  // becomes a live cell
+  if (!currentState.isAlive && aliveNeighbours === 3) {
+    return {
+      isAlive: true,
+    };
+  }
+
+  // dead cell
+  return {
+    isAlive: false,
+  };
+};
+
+const updateCells = (
+  width: number,
+  height: number,
+  cells: CellProps[][],
+  setCells: any
+) => {
   if (!cells.length) {
     return;
   }
@@ -25,9 +97,7 @@ const updateCells = (cells: CellProps[][], setCells: any) => {
   cells.forEach((row, x) => {
     cellsCopy[x] = [];
     row.forEach((cell, y) => {
-      cellsCopy[x][y] = {
-        isAlive: !cell.isAlive,
-      };
+      cellsCopy[x][y] = computeNextState(cells, x, y, width, height);
     });
   });
 
@@ -49,16 +119,22 @@ const initCells = (width: number, height: number, setCells: any) => {
   setCells(cellsCopy);
 };
 
-const BoardContainer = ({ width, height }: BoardContainerProps) => {
-  const [cells, setCells] = useState<CellProps[][]>([]);
+const BoardContainer = ({
+  width,
+  height,
+  initialState = [],
+}: BoardContainerProps) => {
+  const [cells, setCells] = useState<CellProps[][]>(initialState);
 
   useEffect(() => {
-    initCells(width, height, setCells);
+    if (!initialState.length) {
+      initCells(width, height, setCells);
+    }
   }, []);
 
   useEffect(() => {
     setTimeout(() => {
-      updateCells(cells, setCells);
+      updateCells(width, height, cells, setCells);
     }, 1000);
   }, [cells]);
 

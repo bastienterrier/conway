@@ -7,7 +7,7 @@ const App = () => {
     <div className="App">
       <h1>Conway's game of life</h1>
 
-      <BoardContainer width={50} height={20} />
+      <BoardContainer width={50} height={25} />
     </div>
   );
 };

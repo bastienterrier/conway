@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Cell, { CellProps } from '../cell/Cell';
 
 import styles from './Board.module.scss';
