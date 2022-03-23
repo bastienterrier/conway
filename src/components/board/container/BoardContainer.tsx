@@ -3,7 +3,7 @@ import { hexToRgb, rgbToHex } from '../../../helpers/color.helper';
 import { CellProps } from '../../cell/Cell';
 import Board from '../Board';
 
-const generateIsAlive = () => Math.random() > 0.8;
+const generateIsAlive = () => Math.random() > 0.5;
 
 const generateColor = () => {
   const r = Math.round(Math.random() * 255);
@@ -103,9 +103,9 @@ const computeNewColor = (
   }
 
   return rgbToHex(
-    rTotal / aliveCells,
-    gTotal / aliveCells,
-    bTotal / aliveCells
+    Math.round(rTotal / aliveCells),
+    Math.round(gTotal / aliveCells),
+    Math.round(bTotal / aliveCells)
   );
 };
 
@@ -132,16 +132,20 @@ const computeNextState = (
 
   // becomes a live cell
   if (!currentState.isAlive && aliveNeighbours === 3) {
+    const color = computeNewColor(cells, x, y, width, height);
+
+    console.log('color', color);
+
     return {
       isAlive: true,
-      color: computeNewColor(cells, x, y, width, height),
+      color,
     };
   }
 
   // dead cell
   return {
     isAlive: false,
-    color: '',
+    color: currentState.color,
   };
 };
 
@@ -198,7 +202,7 @@ const BoardContainer = ({
   useEffect(() => {
     setTimeout(() => {
       updateCells(width, height, cells, setCells);
-    }, 1000);
+    }, 200);
   }, [cells]);
 
   return <Board cells={cells} />;
