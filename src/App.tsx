@@ -4,7 +4,9 @@ import BoardContainer from './components/board/container/BoardContainer';
 import { CellProps } from './components/cell/Cell';
 
 const convertInitialStateToCellProps = (input: number[][]): CellProps[][] => {
-  return input.map((row) => row.map((col) => ({ isAlive: !!col })));
+  return input.map((row) =>
+    row.map((col) => ({ isAlive: !!col, color: '#abcdef' }))
+  );
 };
 
 const initialState = [
@@ -20,11 +22,7 @@ const App = () => {
     <div className="App">
       <h1>Conway's game of life</h1>
 
-      <BoardContainer
-        width={5}
-        height={5}
-        initialState={convertInitialStateToCellProps(initialState)}
-      />
+      <BoardContainer width={35} height={35} />
     </div>
   );
 };

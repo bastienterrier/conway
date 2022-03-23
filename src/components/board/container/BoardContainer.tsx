@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { hexToRgb, rgbToHex } from '../../../helpers/color.helper';
 import { CellProps } from '../../cell/Cell';
 import Board from '../Board';
 
 const generateIsAlive = () => Math.random() > 0.8;
 
+const generateColor = () => {
+  const r = Math.round(Math.random() * 255);
+  const g = Math.round(Math.random() * 255);
+  const b = Math.round(Math.random() * 255);
+
+  return rgbToHex(r, g, b);
+};
 interface BoardContainerProps {
   width: number;
   height: number;
@@ -50,6 +58,57 @@ const getAliveNeighbours = (
   return aliveCells;
 };
 
+const computeNewColor = (
+  cells: CellProps[][],
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): string => {
+  let rTotal: number = 0;
+  let gTotal: number = 0;
+  let bTotal: number = 0;
+  let aliveCells = 0;
+
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      if (i === 0 && j === 0) {
+        continue;
+      }
+
+      let targetX = x + i;
+      let targetY = y + j;
+
+      if (targetX < 0) {
+        targetX = height - 1;
+      }
+      if (targetX >= height) {
+        targetX = 0;
+      }
+      if (targetY < 0) {
+        targetY = width - 1;
+      }
+      if (targetY >= width) {
+        targetY = 0;
+      }
+
+      const currentCell = cells[targetX][targetY];
+      if (currentCell.isAlive) {
+        rTotal += hexToRgb(currentCell.color).r;
+        gTotal += hexToRgb(currentCell.color).g;
+        bTotal += hexToRgb(currentCell.color).b;
+        aliveCells++;
+      }
+    }
+  }
+
+  return rgbToHex(
+    rTotal / aliveCells,
+    gTotal / aliveCells,
+    bTotal / aliveCells
+  );
+};
+
 const computeNextState = (
   cells: CellProps[][],
   x: number,
@@ -67,6 +126,7 @@ const computeNextState = (
   ) {
     return {
       isAlive: true,
+      color: currentState.color,
     };
   }
 
@@ -74,12 +134,14 @@ const computeNextState = (
   if (!currentState.isAlive && aliveNeighbours === 3) {
     return {
       isAlive: true,
+      color: computeNewColor(cells, x, y, width, height),
     };
   }
 
   // dead cell
   return {
     isAlive: false,
+    color: '',
   };
 };
 
@@ -112,6 +174,7 @@ const initCells = (width: number, height: number, setCells: any) => {
     for (let j = 0; j < width; j++) {
       cellsCopy[i][j] = {
         isAlive: generateIsAlive(),
+        color: generateColor(),
       };
     }
   }

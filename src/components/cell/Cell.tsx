@@ -4,16 +4,13 @@ import styles from './Cell.module.scss';
 
 export interface CellProps {
   isAlive: boolean;
+  color: string;
 }
 
-const Cell = ({ isAlive }: CellProps) => {
-  const cssClasses = [styles.cell];
+const Cell = ({ isAlive, color }: CellProps) => {
+  const style = isAlive ? { backgroundColor: color } : {};
 
-  if (isAlive) {
-    cssClasses.push(styles['cell--alive']);
-  }
-
-  return <div className={cssClasses.join(' ')}></div>;
+  return <div className={styles.cell} style={style}></div>;
 };
 
 export default Cell;

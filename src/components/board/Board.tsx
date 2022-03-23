@@ -15,7 +15,11 @@ const Board = ({ cells }: BoardProps) => {
           <div className={styles.row} key={'row-' + x}>
             {row.map((cell, y) => {
               return (
-                <Cell isAlive={cell.isAlive} key={'row-' + x + 'col-' + y} />
+                <Cell
+                  isAlive={cell.isAlive}
+                  key={'row-' + x + 'col-' + y}
+                  color={cell.color}
+                />
               );
             })}
           </div>
